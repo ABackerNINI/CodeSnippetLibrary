@@ -3,7 +3,7 @@
  *
  *  2019/9/13
  *
- *  Compile with: gcc to_lower,to_upper.c -Wall -Werror -o tt.out
+ *  Compile with: gcc to_lower,to_upper.c -W -Wall -Werror -o tt.out
  */
 
 #include <stdio.h>

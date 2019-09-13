@@ -3,7 +3,7 @@
  *
  *  2019/9/13
  *
- *  Compile with: gcc strcmp,stricmp.c -Wall -Werror -o ss.out
+ *  Compile with: gcc strcmp,stricmp.c -W -Wall -Werror -o ss.out
  */
 
 #include <stdio.h>
