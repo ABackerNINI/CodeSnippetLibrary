@@ -30,10 +30,10 @@ typedef struct _list {
 
 void list_init(list *l);
 void list_destory(list *l);
-void list_push_front(list *l, DATA_TYPE data);
-void list_push_back(list *l, DATA_TYPE data);
+void list_push_front(list *l, DATA_TYPE val);
+void list_push_back(list *l, DATA_TYPE val);
 void list_pop_front(list *l);
-/* Bad choice, 'deque' is recommended if have to use 'pop_back' */
+/* Bad choice, 'dlist' (double linked list) is recommended if have to use 'pop_back' */
 /* void list_pop_back(list *l); */
 DATA_TYPE list_front(list *l);
 DATA_TYPE list_back(list *l);
@@ -65,9 +65,9 @@ void list_destory(list *l) {
     }
 }
 
-void list_push_front(list *l, DATA_TYPE data) {
+void list_push_front(list *l, DATA_TYPE val) {
     list_node *new = (list_node *)malloc(sizeof(list_node));
-    new->data = data;
+    new->data = val;
     new->next = l->first;
 
     if (l->first == NULL) {
@@ -78,9 +78,9 @@ void list_push_front(list *l, DATA_TYPE data) {
     ++l->size;
 }
 
-void list_push_back(list *l, DATA_TYPE data) {
+void list_push_back(list *l, DATA_TYPE val) {
     list_node *new = (list_node *)malloc(sizeof(list_node));
-    new->data = data;
+    new->data = val;
     new->next = NULL;
 
     if (l->first == NULL) {
