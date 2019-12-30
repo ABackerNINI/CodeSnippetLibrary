@@ -240,11 +240,6 @@ void list_pop_front2(List l, list_elem_destory_func func) {
     func(&l->first->data);
     list_pop_front(l);
 }
-
-void list_pop_back2(List l, list_elem_destory_func func) {
-    func(&l->last->data);
-    list_pop_back(l);
-}
 #endif
 
 /***** NOT-RECOMMENDED FUNC *****/
