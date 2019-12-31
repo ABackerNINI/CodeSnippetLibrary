@@ -4,21 +4,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#ifndef _LIST_HIDE_NODE_TYPE
 #define _LIST_HIDE_NODE_TYPE 1
-#endif
-
-#ifndef _LIST_HIDE_LIST_TYPE
 #define _LIST_HIDE_LIST_TYPE 0
-#endif
-
-#ifndef _LIST_ENABLE_UDEDF
-#define _LIST_ENABLE_UDEDF 1  // USER_DEF_ELEM_DESTORY_FUNC
-#endif
-
-#ifndef _LIST_ENABLE_ITERATOR
+#define _LIST_ENABLE_UDEDF 1 /* USER_DEF_ELEM_DESTORY_FUNC */
 #define _LIST_ENABLE_ITERATOR 1
-#endif
 
 /***** LIST ELEMENT TYPE *****/
 
@@ -151,7 +140,7 @@ list_iterator list_end(/* List l */);
 ListElemType list_data(list_iterator iter);
 /* Return a pointer of the data of the iterator 'iter' */
 ListElemType *list_data_ref(list_iterator iter);
-/* Return iterator points to the next of the iterator 'iter' */
+/* Return iterator points to the next of iterator the iterator 'iter' */
 list_iterator list_next(list_iterator iter);
 /* Insert one element into the List after 'iter'.
  * If 'iter' is `NULL`, insert the element to the front of the List. */

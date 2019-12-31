@@ -5,10 +5,8 @@
 
 #include "list.h"
 
-void list_foreach_print_int(ListElemType *data) {
-    printf("%d ", *(int *)*data);
-}
-void list_elem_destory(ListElemType *data) { free(*data); }
+void list_foreach_print_int(void **data) { printf("%d ", *(int *)*data); }
+void list_elem_destory(void **data) { free(*data); }
 
 void list_push_back_int(List l, int val) {
     int *p;

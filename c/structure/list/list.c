@@ -1,5 +1,8 @@
 #include <string.h>
+#include <assert.h>
 #include "list.h"
+
+/***** LIST NODE TYPE *****/
 
 #if (_LIST_HIDE_NODE_TYPE)
 struct _list_node_t_ {
@@ -7,6 +10,8 @@ struct _list_node_t_ {
     struct _list_node_t_ *next;
 };
 #endif
+
+/***** LIST TYPE *****/
 
 #if (_LIST_HIDE_LIST_TYPE)
 typedef struct _list_t_ {
@@ -118,13 +123,14 @@ size_t list_sort_insert(List l, ListElemType val, list_insert_cmp_func func) {
             new_node->next = node->next;
             node->next = new_node;
             ++l->size;
-            break;
+            return pos;
         }
         ++pos;
         node = node->next;
     }
 
-    return pos;
+    assert(0); /* Control should never reach hear */
+    return list_size(l) + 1;
 }
 
 /***** ACCESS FUNC *****/
@@ -193,17 +199,15 @@ void list_insert_after(List l, list_iterator iter, ListElemType val) {
 
     if (iter == NULL) {
         list_push_front(l, val);
-        return;
     } else if (iter == l->last) {
         list_push_back(l, val);
-        return;
+    } else {
+        new_node = (ListNode)malloc(sizeof(list_node_t));
+        new_node->data = val;
+        new_node->next = iter->next;
+        iter->next = new_node;
+        ++l->size;
     }
-
-    new_node = (ListNode)malloc(sizeof(list_node_t));
-    new_node->data = val;
-    new_node->next = iter->next;
-    iter->next = new_node;
-    ++l->size;
 }
 #endif
 
@@ -266,22 +270,20 @@ void list_insert(List l, size_t pos, ListElemType val) {
 
     if (pos == 0) {
         list_push_front(l, val);
-        return;
     } else if (pos == list_size(l)) {
         list_push_back(l, val);
-        return;
-    }
+    } else {
+        node = l->first;
+        while (--pos) {
+            node = node->next;
+        }
 
-    node = l->first;
-    while (--pos) {
-        node = node->next;
+        new_node = (ListNode)malloc(sizeof(list_node_t));
+        new_node->data = val;
+        new_node->next = node->next;
+        node->next = new_node;
+        ++l->size;
     }
-
-    new_node = (ListNode)malloc(sizeof(list_node_t));
-    new_node->data = val;
-    new_node->next = node->next;
-    node->next = new_node;
-    ++l->size;
 }
 
 ListElemType list_at(List l, size_t pos) {
@@ -310,23 +312,21 @@ void list_insert_before(List l, list_iterator iter, ListElemType val) {
 
     if (iter == NULL) {
         list_push_back(l, val);
-        return;
     } else if (iter == l->first) {
         list_push_front(l, val);
-        return;
+    } else {
+        new_node = (ListNode)malloc(sizeof(list_node_t));
+        new_node->data = val;
+
+        node = l->first;
+        while (node->next != iter) {
+            node = node->next;
+        }
+
+        new_node->next = node->next;
+        node->next = new_node;
+        ++l->size;
     }
-
-    new_node = (ListNode)malloc(sizeof(list_node_t));
-    new_node->data = val;
-
-    node = l->first;
-    while (node->next != iter) {
-        node = node->next;
-    }
-
-    new_node->next = node->next;
-    node->next = new_node;
-    ++l->size;
 }
 #endif
 
