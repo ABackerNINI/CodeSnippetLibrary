@@ -118,8 +118,9 @@ void list_foreach_index(List l, list_foreach_index_func func);
  * 'extra'. */
 void list_foreach_extra(List l, list_foreach_extra_func func, void *extra);
 #if (_LIST_HIDE_NODE_TYPE == 0 && _LIST_ENABLE_ITERATOR == 0)
-/* Macro version of list_foreach(), some version of C forces all variables
- * putting at the front of a function. */
+/* Macro version of list_foreach().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
 #define _LIST_FOREACH(list, node_name)                 \
     for (node_name = (list)->first; node_name != NULL; \
          node_name = node_name->next)
@@ -132,22 +133,23 @@ void list_foreach_extra(List l, list_foreach_extra_func func, void *extra);
 /***** ITERATOR FUNC *****/
 
 #if (_LIST_ENABLE_ITERATOR)
-/* Return iterator of the first element in the List 'l' */
+/* Return iterator of the first element in the List 'l'. */
 list_iterator list_begin(List l);
-/* Return iterator indicates the end of List */
+/* Return iterator indicates the end of List. */
 list_iterator list_end(/* List l */);
-/* Return data of the iterator 'iter' */
+/* Return data of the iterator 'iter'. */
 ListElemType list_data(list_iterator iter);
-/* Return a pointer of the data of the iterator 'iter' */
+/* Return a pointer of the data of the iterator 'iter'. */
 ListElemType *list_data_ref(list_iterator iter);
-/* Return iterator points to the next of iterator the iterator 'iter' */
+/* Return iterator points to the next of iterator the iterator 'iter'. */
 list_iterator list_next(list_iterator iter);
 /* Insert one element into the List after 'iter'.
  * If 'iter' is `NULL`, insert the element to the front of the List. */
 void list_insert_after(List l, list_iterator iter, ListElemType val);
 #ifndef _LIST_FOREACH
-/* Macro version of list_foreach(), some version of C forces all variables
- * putting at the front of a function. */
+/* Macro version of list_foreach().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
 #define _LIST_FOREACH(list, iter_name)                          \
     for (iter_name = list_begin(list); iter_name != list_end(); \
          iter_name = list_next(iter_name))
