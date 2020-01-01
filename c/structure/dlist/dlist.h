@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #define _DLIST_HIDE_NODE_TYPE 1
-#define _DLIST_HIDE_LIST_TYPE 0
+#define _DLIST_HIDE_DLIST_TYPE 0
 #define _DLIST_ENABLE_UDEDF 1 /* USER_DEF_ELEM_DESTORY_FUNC */
 #define _DLIST_ENABLE_ITERATOR 1
 
@@ -36,7 +36,7 @@ typedef dlist_node_t *DListNode;
 
 /***** DLIST TYPE *****/
 
-#if (_dLIST_HIDE_LIST_TYPE == 0)
+#if (_DLIST_HIDE_DLIST_TYPE == 0)
 typedef struct _Dlist_t_ {
     DListNode first;
     DListNode last;
@@ -121,6 +121,18 @@ void dlist_foreach_index(DList l, dlist_foreach_index_func func);
 /* For each element in DList 'l', call 'func' with element, its index and
  * 'extra'. */
 void dlist_foreach_extra(DList l, dlist_foreach_extra_func func, void *extra);
+#if (_DLIST_HIDE_NODE_TYPE == 0 &&_DLIST_ENABLE_ITERATOR == 0)
+/* Macro version of dlist_foreach().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
+#define _DLIST_FOREACH(dlist, node_name)                \
+    for (node_name = (dlist)->first; node_name != NULL; \
+         node_name = node_name->next)
+/* Macro version of dlist_foreach(). */
+#define DLIST_FOREACH(dlist, node_name) \
+    DListNode node_name;               \
+    _DLIST_FOREACH(dlist, node_name)
+#endif
 
 /***** ITERATOR FUNC *****/
 
@@ -143,12 +155,18 @@ void dlist_insert_after(DList l, dlist_iterator iter, DListElemType val);
 /* Insert one element into the DList 'l' before 'iter'.
  * If 'iter' is `NULL`, insert the element to the back of the DList. */
 void dlist_insert_before(DList l, dlist_iterator iter, DListElemType val);
-#define _DLIST_FOREACH(list, iter_name)                           \
-    for (iter_name = dlist_begin(list); iter_name != dlist_end(); \
+#ifndef _DLIST_FOREACH
+/* Macro version of dlist_foreach().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
+#define _DLIST_FOREACH(dlist, iter_name)                           \
+    for (iter_name = dlist_begin(dlist); iter_name != dlist_end(); \
          iter_name = dlist_next(iter_name))
-#define DLIST_FOREACH(list, iter_name) \
+/* Macro version of dlist_foreach(). */
+#define DLIST_FOREACH(dlist, iter_name) \
     DListNode iter_name;               \
-    _DLIST_FOREACH(list, iter_name)
+    _DLIST_FOREACH(dlist, iter_name)
+#endif
 #endif
 
 /***** UDEDF FUNC *****/
@@ -170,7 +188,7 @@ void dlist_pop_back2(DList l, dlist_elem_destory_func func);
  */
 void dlist_insert(DList l, size_t pos, DListElemType val);
 /* Return the element at position 'pos' in the DList 'l'.
- * !!!Bad choice!!! Use list iterator instead if dlist iterator is enabled. */
+ * !!!Bad choice!!! Use dlist iterator instead if dlist iterator is enabled. */
 DListElemType dlist_at(DList l, size_t pos);
 /* Return pointer of the element at position 'pos' in the DList 'l'.
  * !!!Bad choice!!! Use dlist iterator instead if dlist iterator is enabled. */

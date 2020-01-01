@@ -14,7 +14,7 @@ struct _dlist_node_t_ {
 
 /***** DLIST TYPE *****/
 
-#if (_DLIST_HIDE_LIST_TYPE)
+#if (_DLIST_HIDE_DLIST_TYPE)
 typedef struct _dlist_t_ {
     DListNode first;
     DListNode last;
@@ -127,11 +127,11 @@ size_t dlist_sort_insert(DList l, DListElemType val,
     DListNode node, new_node;
 
     if (l->first == NULL || func(&l->first->data, &val) <= 0) {
-        list_push_front(l, val);
+        dlist_push_front(l, val);
         return 0;
     } else if (func(&l->last->data, &val) > 0) {
-        list_push_back(l, val);
-        return list_size(l) - 1;
+        dlist_push_back(l, val);
+        return dlist_size(l) - 1;
     }
 
     new_node = (DListNode)malloc(sizeof(dlist_node_t));
@@ -222,9 +222,9 @@ void dlist_insert_after(DList l, dlist_iterator iter, DListElemType val) {
     DListNode new_node;
 
     if (iter == NULL) {
-        list_push_front(l, val);
+        dlist_push_front(l, val);
     } else if (iter == l->last) {
-        list_push_back(l, val);
+        dlist_push_back(l, val);
     } else {
         new_node = (DListNode)malloc(sizeof(dlist_node_t));
         new_node->data = val;
@@ -240,9 +240,9 @@ void dlist_insert_before(DList l, dlist_iterator iter, DListElemType val) {
     DListNode new_node;
 
     if (iter == NULL) {
-        list_push_back(l, val);
+        dlist_push_back(l, val);
     } else if (iter == l->first) {
-        list_push_front(l, val);
+        dlist_push_front(l, val);
     } else {
         new_node = (DListNode)malloc(sizeof(dlist_node_t));
         new_node->data = val;
@@ -296,9 +296,9 @@ void dlist_insert(DList l, size_t pos, DListElemType val) {
     DListNode node, new_node;
 
     if (pos == 0) {
-        list_push_front(l, val);
-    } else if (pos == list_size(l)) {
-        list_push_back(l, val);
+        dlist_push_front(l, val);
+    } else if (pos == dlist_size(l)) {
+        dlist_push_back(l, val);
     } else {
         node = l->first;
         while (--pos) {
