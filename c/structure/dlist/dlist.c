@@ -203,12 +203,51 @@ void dlist_foreach_extra(DList l, dlist_foreach_extra_func func, void *extra) {
     }
 }
 
+void dlist_foreach_r(DList l, dlist_foreach_func func) {
+    DListNode node;
+
+    node = l->last;
+    while (node) {
+        func(&node->data);
+        node = node->prev;
+    }
+}
+
+void dlist_foreach_index_r(DList l, dlist_foreach_index_func func) {
+    size_t index;
+    DListNode node;
+
+    index = 0;
+    node = l->last;
+    while (node) {
+        func(&node->data, index++);
+        node = node->prev;
+    }
+}
+
+void dlist_foreach_extra_r(DList l, dlist_foreach_extra_func func,
+                           void *extra) {
+    size_t index;
+    DListNode node;
+
+    index = 0;
+    node = l->last;
+    while (node) {
+        func(&node->data, index++, extra);
+        node = node->prev;
+    }
+}
+
 /***** ITERATOR FUNC *****/
 
 #if (_DLIST_ENABLE_ITERATOR)
 dlist_iterator dlist_begin(DList l) { return l->first; }
 
 dlist_iterator dlist_end(/* DList l */) { return NULL; }
+
+dlist_iterator dlist_rbegin(DList l) { return l->last; }
+
+dlist_iterator dlist_rend(/* DList l */) { return NULL; }
 
 DListElemType dlist_data(dlist_iterator iter) { return iter->data; }
 

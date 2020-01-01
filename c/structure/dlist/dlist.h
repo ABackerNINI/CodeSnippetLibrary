@@ -121,7 +121,15 @@ void dlist_foreach_index(DList l, dlist_foreach_index_func func);
 /* For each element in DList 'l', call 'func' with element, its index and
  * 'extra'. */
 void dlist_foreach_extra(DList l, dlist_foreach_extra_func func, void *extra);
-#if (_DLIST_HIDE_NODE_TYPE == 0 &&_DLIST_ENABLE_ITERATOR == 0)
+/* For each element in DList 'l' in reverse order, call 'func' with element. */
+void dlist_foreach_r(DList l, dlist_foreach_func func);
+/* For each element in DList 'l' in reverse order, call 'func' with element and
+ * its index. */
+void dlist_foreach_index_r(DList l, dlist_foreach_index_func func);
+/* For each element in DList 'l' in reverse order, call 'func' with element, its
+ * index and 'extra'. */
+void dlist_foreach_extra_r(DList l, dlist_foreach_extra_func func, void *extra);
+#if (_DLIST_HIDE_NODE_TYPE == 0 && _DLIST_ENABLE_ITERATOR == 0)
 /* Macro version of dlist_foreach().
  * Some version of C compilers force all variables putting at the front of a
  * function. */
@@ -130,24 +138,39 @@ void dlist_foreach_extra(DList l, dlist_foreach_extra_func func, void *extra);
          node_name = node_name->next)
 /* Macro version of dlist_foreach(). */
 #define DLIST_FOREACH(dlist, node_name) \
-    DListNode node_name;               \
+    DListNode node_name;                \
     _DLIST_FOREACH(dlist, node_name)
+/* Macro version of dlist_foreach_r().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
+#define _DLIST_FOREACH_R(dlist, node_name)             \
+    for (node_name = (dlist)->last; node_name != NULL; \
+         node_name = node_name->prev)
+/* Macro version of dlist_foreach_r(). */
+#define DLIST_FOREACH_R(dlist, node_name) \
+    DListNode node_name;                  \
+    _DLIST_FOREACH_R(dlist, node_name)
 #endif
 
 /***** ITERATOR FUNC *****/
 
 #if (_DLIST_ENABLE_ITERATOR)
-/* Return iterator of the first element in the DList 'l' */
+/* Return iterator of the first element in the DList 'l'. */
 dlist_iterator dlist_begin(DList l);
-/* Return iterator indicates the end of DList */
+/* Return iterator indicates the end of DList. */
 dlist_iterator dlist_end(/* DList l */);
-/* Return data of the iterator 'iter' */
+/* Return iterator of the last element in the DList 'l', the first element in
+ * reverse order. */
+dlist_iterator dlist_rbegin(DList l);
+/* Return iterator indicates the end of DList in reverse order. */
+dlist_iterator dlist_rend(/* DList l */);
+/* Return data of the iterator 'iter'. */
 DListElemType dlist_data(dlist_iterator iter);
-/* Return a pointer of the data of the iterator 'iter' */
+/* Return a pointer of the data of the iterator 'iter'. */
 DListElemType *dlist_data_ref(dlist_iterator iter);
-/* Return iterator points to the prev iterator of the iterator 'iter' */
+/* Return iterator points to the prev iterator of the iterator 'iter'. */
 dlist_iterator dlist_prev(dlist_iterator iter);
-/* Return iterator points to the next iterator of the iterator 'iter' */
+/* Return iterator points to the next iterator of the iterator 'iter'. */
 dlist_iterator dlist_next(dlist_iterator iter);
 /* Insert one element into the DList after 'iter'.
  * If 'iter' is `NULL`, insert the element to the front of the DList. */
@@ -164,8 +187,18 @@ void dlist_insert_before(DList l, dlist_iterator iter, DListElemType val);
          iter_name = dlist_next(iter_name))
 /* Macro version of dlist_foreach(). */
 #define DLIST_FOREACH(dlist, iter_name) \
-    DListNode iter_name;               \
+    DListNode iter_name;                \
     _DLIST_FOREACH(dlist, iter_name)
+/* Macro version of dlist_foreach_r().
+ * Some version of C compilers force all variables putting at the front of a
+ * function. */
+#define _DLIST_FOREACH_R(dlist, iter_name)                           \
+    for (iter_name = dlist_rbegin(dlist); iter_name != dlist_rend(); \
+         iter_name = dlist_prev(iter_name))
+/* Macro version of dlist_foreach_r(). */
+#define DLIST_FOREACH_R(dlist, iter_name) \
+    DListNode iter_name;                  \
+    _DLIST_FOREACH_R(dlist, iter_name)
 #endif
 #endif
 
