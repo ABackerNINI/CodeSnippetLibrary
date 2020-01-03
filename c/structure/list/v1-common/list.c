@@ -21,6 +21,11 @@ typedef struct _list_t_ {
 } list_t;
 #endif
 
+/***** STATIC FUNC *****/
+
+static ListNode ListGetNode(List l, size_t pos);
+static ListNode ListGetNode2(ListNode node, size_t pos);
+
 /***** INIT-DESTORY FUNC *****/
 
 void list_init(List l) {
@@ -101,7 +106,27 @@ void list_pop_front(List l) {
     --l->size;
 }
 
-size_t list_sort_insert(List l, ListElemType val, list_insert_cmp_func func) {
+void list_merge(List dest, List source) {
+    if (source->first != NULL) {
+        if (dest->first == NULL) {
+            dest->first = source->first;
+            dest->last = source->last;
+            dest->size = source->size;
+        } else {
+            dest->last->next = source->first;
+            dest->last = source->last;
+            dest->size += source->size;
+        }
+        source->first = source->last = NULL;
+        source->size = 0;
+    }
+}
+
+void list_sort(List l, list_elem_cmp_func func) {
+    // TODO
+}
+
+size_t list_sort_insert(List l, ListElemType val, list_elem_cmp_func func) {
     size_t pos;
     ListNode node, new_node;
 
@@ -110,7 +135,7 @@ size_t list_sort_insert(List l, ListElemType val, list_insert_cmp_func func) {
         return 0;
     } else if (func(&l->last->data, &val) > 0) {
         list_push_back(l, val);
-        return list_size(l) - 1;
+        return l->size - 1;
     }
 
     new_node = (ListNode)malloc(sizeof(list_node_t));
@@ -130,7 +155,43 @@ size_t list_sort_insert(List l, ListElemType val, list_insert_cmp_func func) {
     }
 
     assert(0); /* Control should never reach hear */
-    return list_size(l) + 1;
+    return l->size + 1;
+}
+
+size_t list_sort_insert2(List l, ListElemType val, list_elem_cmp_func func) {
+    size_t pos;
+    ListNode node, new_node;
+
+    if (l->first == NULL || func(&l->first->data, &val) < 0) {
+        list_push_front(l, val);
+        return 0;
+    } else if (func(&l->last->data, &val) >= 0) {
+        list_push_back(l, val);
+        return l->size - 1;
+    }
+
+    new_node = (ListNode)malloc(sizeof(list_node_t));
+    new_node->data = val;
+
+    pos = 1;
+    node = l->first;
+    while (node->next) {
+        if (func(&node->next->data, &val) < 0) {
+            new_node->next = node->next;
+            node->next = new_node;
+            ++l->size;
+            return pos;
+        }
+        ++pos;
+        node = node->next;
+    }
+
+    assert(0); /* Control should never reach hear */
+    return l->size + 1;
+}
+
+void list_sort_merge(List dest, List source, list_elem_cmp_func func) {
+    // TODO
 }
 
 /***** ACCESS FUNC *****/
@@ -145,7 +206,7 @@ ListElemType *list_back_ref(List l) { return &l->last->data; }
 
 size_t list_size(List l) { return l->size; }
 
-bool list_empty(List l) { return list_size(l) == 0; }
+bool list_empty(List l) { return l->size == 0; }
 
 void list_foreach(List l, list_foreach_func func) {
     ListNode node;
@@ -184,7 +245,7 @@ void list_foreach_extra(List l, list_foreach_extra_func func, void *extra) {
 /***** ITERATOR FUNC *****/
 
 #if (_LIST_ENABLE_ITERATOR)
-list_iterator list_begin(List l) { return l->first; }
+list_iterator list_begin(List l) { return (list_iterator)l->first; }
 
 list_iterator list_end(/* List l */) { return NULL; }
 
@@ -192,7 +253,44 @@ ListElemType list_data(list_iterator iter) { return iter->data; }
 
 ListElemType *list_data_ref(list_iterator iter) { return &iter->data; }
 
-list_iterator list_next(list_iterator iter) { return iter->next; }
+list_iterator list_next(list_iterator iter) {
+    return (list_iterator)iter->next;
+}
+
+list_iterator list_find(List l, ListElemType val, list_elem_cmp_func func) {
+    ListNode node;
+
+    node = l->first;
+    while (node) {
+        if (func(&val, &node->data) == 0) {
+            return (list_iterator)node;
+        }
+        node = node->next;
+    }
+    return NULL;
+}
+
+list_iterator list_find2(list_iterator iter, ListElemType val,
+                         list_elem_cmp_func func) {
+    ListNode node;
+
+    node = iter;
+    while (node) {
+        if (func(&val, &node->data) == 0) {
+            return (list_iterator)node;
+        }
+        node = node->next;
+    }
+    return NULL;
+}
+
+void list_swap(list_iterator iter1, list_iterator iter2) {
+    ListElemType val;
+
+    val = iter1->data;
+    iter1->data = iter2->data;
+    iter2->data = val;
+}
 
 void list_insert_after(List l, list_iterator iter, ListElemType val) {
     ListNode new_node;
@@ -270,7 +368,7 @@ void list_insert(List l, size_t pos, ListElemType val) {
 
     if (pos == 0) {
         list_push_front(l, val);
-    } else if (pos == list_size(l)) {
+    } else if (pos == l->size) {
         list_push_back(l, val);
     } else {
         node = l->first;
@@ -306,7 +404,35 @@ ListElemType *list_at_ref(List l, size_t pos) {
     return &node->data;
 }
 
+void list_swap_pos(List l, size_t pos1, size_t pos2) {
+    size_t tmp;
+    ListNode node1, node2;
+
+    if (pos1 == pos2) {
+        return;
+    }
+
+    if (pos2 < pos1) {
+        tmp = pos1;
+        pos1 = pos2;
+        pos2 = tmp;
+    }
+
+    node1 = ListGetNode(l, pos1 - 1);
+    node2 = ListGetNode2(node1, pos2 - pos1);
+
+    if (pos1 + 1 == pos2) {
+        return;
+    }
+
+    // TODO
+}
+
 #if (_LIST_ENABLE_ITERATOR)
+void list_swap2(List l, list_iterator iter1, list_iterator iter2) {
+    // TODO
+}
+
 void list_insert_before(List l, list_iterator iter, ListElemType val) {
     ListNode node, new_node;
 
@@ -336,3 +462,16 @@ void list_pop_back2(List l, list_elem_destory_func func) {
     list_pop_back(l);
 }
 #endif
+
+/***** STATIC FUNC *****/
+
+static ListNode ListGetNode(List l, size_t pos) {
+    return ListGetNode2(l->first, pos);
+}
+
+static ListNode ListGetNode2(ListNode node, size_t pos) {
+    while (pos--) {
+        node = node->next;
+    }
+    return node;
+}
