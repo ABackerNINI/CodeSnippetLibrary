@@ -11,7 +11,12 @@
 
 /***** LIST ELEMENT TYPE *****/
 
-typedef void *ListElemType; 
+// typedef void *ListElemType;
+/* Use define rather than typedef here so that you can define it for each object
+ * file by adding `-DListElemType='type'` to your compiler flags. */
+#ifndef ListElemType
+#define ListElemType void *
+#endif
 
 /***** LIST ELEMENT DESTORY FUNC TYPE *****/
 
