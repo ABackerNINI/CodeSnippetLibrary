@@ -95,5 +95,13 @@ int main() {
     test_3();
     test_4();
 
+    malloc(10);
+
+    int a = 0;
+
+    typeof(a) b = 1;
+
+    printf("%d\n",b);
+
     return 0;
 }

@@ -194,6 +194,10 @@ void list_sort_merge(List dest, List source, list_elem_cmp_func func) {
     // TODO
 }
 
+void list_clear(List l) {
+    // TODO
+}
+
 /***** ACCESS FUNC *****/
 
 ListElemType list_front(List l) { return l->first->data; }
@@ -240,6 +244,10 @@ void list_foreach_extra(List l, list_foreach_extra_func func, void *extra) {
         func(&node->data, index++, extra);
         node = node->next;
     }
+}
+
+List list_copy(List l) {
+    // TODO
 }
 
 /***** ITERATOR FUNC *****/
@@ -342,6 +350,8 @@ void list_pop_front2(List l, list_elem_destory_func func) {
     func(&l->first->data);
     list_pop_front(l);
 }
+
+void list_clear2(List l, list_elem_destory_func func) {}
 #endif
 
 /***** NOT-RECOMMENDED FUNC *****/
@@ -406,7 +416,7 @@ ListElemType *list_at_ref(List l, size_t pos) {
 
 void list_swap_pos(List l, size_t pos1, size_t pos2) {
     size_t tmp;
-    ListNode node1, node2;
+    ListNode fa1, fa2;
 
     if (pos1 == pos2) {
         return;
@@ -418,10 +428,13 @@ void list_swap_pos(List l, size_t pos1, size_t pos2) {
         pos2 = tmp;
     }
 
-    node1 = ListGetNode(l, pos1 - 1);
-    node2 = ListGetNode2(node1, pos2 - pos1);
+    fa1 = ListGetNode(l, pos1 - 1);
+    fa2 = ListGetNode2(fa1, pos2 - pos1);
 
     if (pos1 + 1 == pos2) {
+        fa1->next = fa2->next;
+        fa2->next = fa2->next->next;
+        fa2->next->next = fa2;
         return;
     }
 

@@ -114,6 +114,10 @@ size_t list_sort_insert2(List l, ListElemType val, list_elem_cmp_func func);
  * function.
  * @Time complexity: O(n1+n2). */
 void list_sort_merge(List dest, List source, list_elem_cmp_func func);
+size_t list_remove(List l, ListElemType val);
+void list_remove2(List l, list_iterator iter);
+size_t list_remove_pos(List l,size_t pos);
+void list_clear(List l);
 
 /***** ACCESS FUNC *****/
 
@@ -138,6 +142,7 @@ void list_foreach_index(List l, list_foreach_index_func func);
 /* For each element in List 'l', call 'func' with element, its index and
  * 'extra'. */
 void list_foreach_extra(List l, list_foreach_extra_func func, void *extra);
+List list_copy(List l);
 #if (_LIST_HIDE_NODE_TYPE == 0 && _LIST_ENABLE_ITERATOR == 0)
 /* Macro version of list_foreach().
  * Some version of C compilers force all variables putting at the front of a
@@ -210,6 +215,7 @@ void list_destory2(List l, list_elem_destory_func func);
 void list_delete2(List l, list_elem_destory_func func);
 /* Pop one element from the front of the List 'l'. */
 void list_pop_front2(List l, list_elem_destory_func func);
+void list_clear2(List l, list_elem_destory_func func);
 #endif
 
 /***** NOT-RECOMMENDED FUNC *****/
@@ -256,5 +262,7 @@ void list_insert_before(List l, list_iterator iter, ListElemType val);
  * @Time complexity: O(n). */
 void list_pop_back2(List l, list_elem_destory_func func);
 #endif
+
+#define TP typeof
 
 #endif  //_LIST_H_
