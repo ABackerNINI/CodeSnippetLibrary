@@ -23,8 +23,7 @@
  * @brief Parse arguments using getopt_long().
  *
  * @return
- *      @retval 0 if no errors.
- *      @retval -1 if error.
+ *      @retval index to the first non-options.
  */
 int parse_args(int argc, char **argv) {
     /* short options:
