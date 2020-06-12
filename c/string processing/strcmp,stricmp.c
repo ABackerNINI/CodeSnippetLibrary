@@ -18,7 +18,7 @@
 
 /*===========================================================================*/
 
-/* Compare two strings. Return 0 if identical */
+/* Compare two strings. Return 0 if identical. */
 int my_strcmp(const char *s1, const char *s2);
 
 /* Convert 'c' to lowercase. */

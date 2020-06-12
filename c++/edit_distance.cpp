@@ -94,7 +94,7 @@ std::vector<EditType> CalculateOptimalEdits(const std::vector<size_t> &left,
     return best_path;
 }
 
-// Helper class to convert string into ids with deduplication.
+// Helper class to convert string into ids with de-duplication.
 class InternalStrings {
    public:
     size_t GetId(const std::string &str) {

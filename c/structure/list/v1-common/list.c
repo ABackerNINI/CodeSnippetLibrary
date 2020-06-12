@@ -154,7 +154,7 @@ size_t list_sort_insert(List l, ListElemType val, list_elem_cmp_func func) {
         node = node->next;
     }
 
-    assert(0); /* Control should never reach hear */
+    assert(0); /* Control should never reach here */
     return l->size + 1;
 }
 
