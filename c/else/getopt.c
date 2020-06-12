@@ -20,7 +20,7 @@
 /*===========================================================================*/
 
 /**
- * @brief Parse arguments.
+ * @brief Parse arguments using getopt().
  *
  * @return
  *      @retval 0 if no errors.
@@ -32,10 +32,10 @@ int parse_args(int argc, char **argv) {
         'c' has optional argument.
      */
     const char *optstr = "ab:c::";
-    
+
     int i, ch;
 
-    opterr = 0;
+    opterr = 0; /* if set to 1, error msg will be printed to stderr */
     while ((ch = getopt(argc, argv, optstr)) != -1) {
         switch (ch) {
             case 'a':
