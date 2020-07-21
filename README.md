@@ -1,1 +1,1 @@
-# CodeSnippetLibrary
+# CODE SNIPPET LIBRARY
