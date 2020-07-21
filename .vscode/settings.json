@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "ctype.h": "c",
+        "string.h": "c",
+        "list.h": "c",
+        "dlist.h": "c",
+        "unordered_map": "c",
+        "list": "c"
+    },
+    "cSpell.words": [
+        "UDEDF",
+        "dlist",
+        "idata",
+        "inext"
+    ],
+    "C_Cpp.errorSquiggles": "Enabled"
+}
