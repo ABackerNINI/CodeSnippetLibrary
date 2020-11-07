@@ -1,5 +1,5 @@
 /** File: vector.c
- *  Tags: c,structure,vector
+ *  Tags: c,structure,vector,debug_level,range_check
  *
  *  2019/9/13
  *
@@ -14,6 +14,7 @@
 /*===========================================================================*/
 
 #define DEFAULT_VECTOR_CAPACITY 64
+#define VECTOR_DEBUG_LEVEL 1
 
 typedef int DATA_TYPE;
 
@@ -72,17 +73,47 @@ void vec_push_back(vector *v, DATA_TYPE val) {
     v->data[v->size++] = val;
 }
 
-DATA_TYPE vec_front(vector *v) { return v->data[0]; }
+DATA_TYPE vec_front(vector *v) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(v->size);
+#endif
+    return v->data[0];
+}
 
-DATA_TYPE *vec_front_ref(vector *v) { return &v->data[0]; }
+DATA_TYPE *vec_front_ref(vector *v) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(v->size);
+#endif
+    return &v->data[0];
+}
 
-DATA_TYPE vec_back(vector *v) { return v->data[v->size - 1]; }
+DATA_TYPE vec_back(vector *v) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(v->size);
+#endif
+    return v->data[v->size - 1];
+}
 
-DATA_TYPE *vec_back_ref(vector *v) { return &v->data[v->size - 1]; }
+DATA_TYPE *vec_back_ref(vector *v) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(v->size);
+#endif
+    return &v->data[v->size - 1];
+}
 
-DATA_TYPE vec_at(vector *v, size_t index) { return v->data[index]; }
+DATA_TYPE vec_at(vector *v, size_t index) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(index < v->size);
+#endif
+    return v->data[index];
+}
 
-DATA_TYPE *vec_at_ref(vector *v, size_t index) { return &v->data[index]; }
+DATA_TYPE *vec_at_ref(vector *v, size_t index) {
+#if (VECTOR_DEBUG_LEVEL >= 1)
+    assert(index < v->size);
+#endif
+    return &v->data[index];
+}
 
 size_t vec_size(vector *v) { return v->size; }
 
