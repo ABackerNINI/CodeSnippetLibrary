@@ -1,45 +1,124 @@
+/** File: vector.c
+ *  Tags: c,structure,vector
+ *
+ *  2019/9/13
+ *
+ *  Compile with: gcc vector.c -W -Wall -Werror -o vector.out
+ */
+
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <assert.h>
+#include <stdbool.h>
 
-typedef struct {
-    void *data;
-    size_t capacity;
+/*===========================================================================*/
+
+#define DEFAULT_VECTOR_CAPACITY 64
+
+typedef int DATA_TYPE;
+
+typedef struct _vector {
+    DATA_TYPE *data;
     size_t size;
-} vec_t;
+    size_t capacity;
+} vector;
 
-void vec_init(vec_t *v);
-void vec_init2(vec_t *v, size_t capacity);
-void vec_destroy(vec_t *v);
-void vec_push_back(vec_t *v);
-void vec_pop_back(vec_t *v);
-int vec_empty();
-size_t vec_size();
-size_t vec_capacity();
+void vec_init(vector *v);
+void vec_init2(vector *v, size_t capacity);
+void vec_init3(vector *v, size_t capacity, size_t size);
+void vec_destory(vector *v);
+void vec_push_back(vector *v, DATA_TYPE val);
+DATA_TYPE vec_back(vector *v);
+DATA_TYPE *vec_back_ref(vector *v);
+DATA_TYPE vec_at(vector *v, size_t index);
+DATA_TYPE *vec_at_ref(vector *v, size_t index);
+size_t vec_size(vector *v);
+bool vec_empty(vector *v);
+void vec_shrink(vector *v);
 
-void vec_init(vec_t *v) {
-    v->data = NULL;
-    v->capacity = 0;
-    v->size = 0;
+/*===========================================================================*/
+
+void vec_init(vector *v) { vec_init2(v, DEFAULT_VECTOR_CAPACITY); }
+
+void vec_init2(vector *v, size_t capacity) { vec_init3(v, capacity, 0); }
+
+void vec_init3(vector *v, size_t capacity, size_t size) {
+    v->capacity = capacity;
+    if (v->capacity > 0) {
+        v->data = (DATA_TYPE *)malloc(sizeof(DATA_TYPE) * v->capacity);
+    } else {
+        v->data = NULL;
+    }
+    v->size = size;
 }
 
-void vec_init2(vec_t *v, size_t capacity) {
-    v->data = (void *)malloc(capacity);
+void vec_destory(vector *v) {
+    if (v->data) free(v->data);
 }
 
-void vec_destroy(vec_t *v) {}
+void vec_push_back(vector *v, DATA_TYPE val) {
+    if (v->size == v->capacity) {
+        v->capacity += v->capacity < 4 ? 1 : v->capacity / 2;
+        v->data =
+            (DATA_TYPE *)realloc(v->data, sizeof(DATA_TYPE) * v->capacity);
+#if (DEBUG)
+        printf("vector: realloc %ld @vec_push_back\n", v->capacity);
+#endif
+    }
+    v->data[v->size++] = val;
+}
 
-void vec_push_back(vec_t *v) {}
+DATA_TYPE vec_back(vector *v) { return v->data[v->size - 1]; }
 
-void vec_pop_back(vec_t *v) {}
+DATA_TYPE *vec_back_ref(vector *v) { return &v->data[v->size - 1]; }
 
-int vec_empty() {}
+DATA_TYPE vec_at(vector *v, size_t index) {
+    assert(index < v->size);
+    return v->data[index];
+}
 
-size_t vec_size() {}
+DATA_TYPE *vec_at_ref(vector *v, size_t index) {
+    assert(index < v->size);
+    return &v->data[index];
+}
 
-size_t vec_capacity() {}
+size_t vec_size(vector *v) { return v->size; }
 
-int main(int argc, char **argv) {
-    printf("Hello world.\n");
+bool vec_empty(vector *v) { return v->size == 0; }
+
+void vec_shrink(vector *v) {
+    if (v->size < v->capacity) {
+        v->capacity = v->size;
+        v->data =
+            (DATA_TYPE *)realloc(v->data, sizeof(DATA_TYPE) * v->capacity);
+    }
+}
+
+/*===========================================================================*/
+
+void test_vec() {
+    int i;
+    vector v;
+    vec_init3(&v, 100, 10);
+
+    for (i = 0; i < 10; ++i) {
+        (*vec_at_ref(&v, i)) = i;
+    }
+    for (i = 0; i < 10; ++i) {
+        printf("%d ", vec_at(&v, i));
+    }
+    printf("\n");
+
+    for (i = 10; i < 2000; ++i) {
+        vec_push_back(&v, i);
+    }
+    assert(vec_size(&v) == 2000);
+
+    vec_destory(&v);
+}
+
+int main() {
+    test_vec();
 
     return 0;
 }
