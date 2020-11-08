@@ -25,7 +25,7 @@ typedef struct {
 
     /* Can use 'size' to represent all the following three members, but to avoid
      * repeated calculation, use them */
-    /* The next element position is (char*)blocks[_cur_block] + block_offset */
+    /* The next element position is (char*)blocks[_cur_block] + _cur_offset */
 
     size_t _cur_block;  /* current block */
     size_t _cur_offset; /* block offset */
