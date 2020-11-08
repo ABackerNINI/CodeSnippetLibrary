@@ -4,7 +4,7 @@
  *  Desc: Use it when you need to allocate a lot of fixed size blocks, and thoes
  *      blocks are not going to be freed until the end.
  *
- *  2020/11/8
+ *  Date: 2020/11/8
  *
  *  Compile with: gcc mempool.c -W -Wall -Werror -o mempool.out
  */
