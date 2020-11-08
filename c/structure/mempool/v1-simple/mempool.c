@@ -17,8 +17,6 @@
 
 /*===========================================================================*/
 
-#define DEFAULT_MEMPOOL_CAPACITY 64
-
 typedef struct {
     void **blocks;     /* data blocks */
     size_t nblocks;    /* how many data blocks */
