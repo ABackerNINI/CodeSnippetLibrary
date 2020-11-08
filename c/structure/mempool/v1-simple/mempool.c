@@ -38,12 +38,14 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block);
 void mpool_destory(mempool *mp);
 void mpool_add_n_blocks(mempool *mp, size_t n);
 void *mpool_alloc(mempool *mp);
+void *mpool_at(mempool *mp, size_t index);
 size_t mpool_size(mempool *mp);
 size_t mpool_capacity(mempool *mp);
 bool mpool_empty(mempool *mp);
 
 /*===========================================================================*/
 
+/* Initialize the mempool. */
 void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
     mp->blocks = NULL;
     mp->nblocks = 0;
@@ -54,6 +56,7 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
     mp->_max_offset = elem_size * nelems_per_block;
 }
 
+/* Destory the mempool. */
 void mpool_destory(mempool *mp) {
     size_t i;
     for (i = 0; i < mp->nblocks; i++) {
@@ -62,6 +65,8 @@ void mpool_destory(mempool *mp) {
     free(mp->blocks);
 }
 
+/* Add n memery block to the mempool, each block can hold nelems_per_block
+ * elements. */
 void mpool_add_n_blocks(mempool *mp, size_t n) {
     size_t i;
     mp->blocks = (void **)malloc(sizeof(void *) * (mp->nblocks + n));
@@ -73,6 +78,7 @@ void mpool_add_n_blocks(mempool *mp, size_t n) {
     mp->nblocks += n;
 }
 
+/* Allocate memory for an element. */
 void *mpool_alloc(mempool *mp) {
     if (mp->_cur_offset == mp->_max_offset) {
         /* if cur_offset reaches the max_offset, that means the current block is
@@ -89,12 +95,22 @@ void *mpool_alloc(mempool *mp) {
     return addr;
 }
 
+/* Get address of an allocated element. */
+void *mpool_at(mempool *mp, size_t index) {
+    size_t block = index / mp->block_size;
+    size_t offset = index % mp->block_size * mp->elem_size;
+    return ((char *)mp->blocks[block]) + offset;
+}
+
+/* Get number of elements allocated in the mempool. */
 size_t mpool_size(mempool *mp) {
     return mp->block_size * mp->_cur_block + mp->_cur_offset / mp->block_size;
 }
 
+/* Get number of elements the mempool can currently hold. */
 size_t mpool_capacity(mempool *mp) { return mp->nblocks * mp->block_size; }
 
+/* Check if no elements has been allocated in the mempool. */
 bool mpool_empty(mempool *mp) { return mpool_size(mp) == 0; }
 
 /*===========================================================================*/
