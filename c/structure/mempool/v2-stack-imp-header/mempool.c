@@ -79,8 +79,7 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
     mp->block_size = nelems_per_block;
     mp->size = 0;
     stk_init(&mp->free_blocks);
-    mp->_max_offset =
-        elem_size * nelems_per_block + (MEMPOOL_MEM_ALIGNMENT - HEADER_SIZE);
+    mp->_max_offset = elem_size * nelems_per_block + INIT_OFFSET;
     mp->_cur_block = 0;
     mp->_cur_offset = mp->_max_offset;
 }
