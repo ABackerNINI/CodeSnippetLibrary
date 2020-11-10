@@ -14,10 +14,10 @@
 
 #define DEFAULT_STACK_CAPACITY 64
 
-typedef int DATA_TYPE;
+typedef int STACK_DATA_TYPE;
 
 typedef struct _stack {
-    DATA_TYPE *s;
+    STACK_DATA_TYPE *s;
     size_t size;
     size_t capacity;
 } stack;
@@ -25,10 +25,10 @@ typedef struct _stack {
 void stk_init(stack *s);
 void stk_init_by_capacity(stack *s, size_t capacity);
 void stk_destory(stack *s);
-void stk_push(stack *s, DATA_TYPE val);
+void stk_push(stack *s, STACK_DATA_TYPE val);
 void stk_pop(stack *s);
-DATA_TYPE stk_top(stack *s);
-DATA_TYPE *stk_top_ref(stack *s);
+STACK_DATA_TYPE stk_top(stack *s);
+STACK_DATA_TYPE *stk_top_ref(stack *s);
 size_t stk_size(stack *s);
 int stk_empty(stack *s);
 
@@ -39,7 +39,7 @@ void stk_init(stack *s) { stk_init_by_capacity(s, DEFAULT_STACK_CAPACITY); }
 void stk_init_by_capacity(stack *s, size_t capacity) {
     s->capacity = capacity;
     if (s->capacity > 0) {
-        s->s = (DATA_TYPE *)malloc(sizeof(DATA_TYPE) * s->capacity);
+        s->s = (STACK_DATA_TYPE *)malloc(sizeof(STACK_DATA_TYPE) * s->capacity);
     } else {
         s->s = NULL;
     }
@@ -50,19 +50,19 @@ void stk_destory(stack *s) {
     if (s->s) free(s->s);
 }
 
-void stk_push(stack *s, DATA_TYPE val) {
+void stk_push(stack *s, STACK_DATA_TYPE val) {
     if (s->size == s->capacity) {
         s->capacity += s->capacity < 4 ? 1 : s->capacity / 2;
-        s->s = (DATA_TYPE *)realloc(s->s, sizeof(DATA_TYPE) * s->capacity);
+        s->s = (STACK_DATA_TYPE *)realloc(s->s, sizeof(STACK_DATA_TYPE) * s->capacity);
     }
     s->s[s->size++] = val;
 }
 
 void stk_pop(stack *s) { --s->size; }
 
-DATA_TYPE stk_top(stack *s) { return s->s[s->size - 1]; }
+STACK_DATA_TYPE stk_top(stack *s) { return s->s[s->size - 1]; }
 
-DATA_TYPE *stk_top_ref(stack *s) { return &s->s[s->size - 1]; }
+STACK_DATA_TYPE *stk_top_ref(stack *s) { return &s->s[s->size - 1]; }
 
 size_t stk_size(stack *s) { return s->size; }
 

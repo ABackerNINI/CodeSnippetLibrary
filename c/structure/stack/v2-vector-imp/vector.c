@@ -1,46 +1,9 @@
-/** File: vector.c
- *  Tags: c,structure,vector,debug_level,range_check
- *
- *  2019/9/13
- *
- *  Compile with: gcc vector.c -W -Wall -Werror -o vector.out
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
 
-/*===========================================================================*/
-
-#define DEFAULT_VECTOR_CAPACITY 64
-#define VECTOR_DEBUG_LEVEL 1
-
-typedef int VEC_DATA_TYPE;
-
-typedef struct _vector {
-    VEC_DATA_TYPE *data;
-    size_t size;
-    size_t capacity;
-} vector;
-
-void vec_init(vector *v);
-void vec_init2(vector *v, size_t capacity);
-void vec_init3(vector *v, size_t capacity, size_t size);
-void vec_destory(vector *v);
-void vec_push_back(vector *v, VEC_DATA_TYPE val);
-void vec_pop_back(vector *v);
-VEC_DATA_TYPE vec_front(vector *v);
-VEC_DATA_TYPE *vec_front_ref(vector *v);
-VEC_DATA_TYPE vec_back(vector *v);
-VEC_DATA_TYPE *vec_back_ref(vector *v);
-VEC_DATA_TYPE vec_at(vector *v, size_t index);
-VEC_DATA_TYPE *vec_at_ref(vector *v, size_t index);
-size_t vec_size(vector *v);
-bool vec_empty(vector *v);
-void vec_shrink(vector *v);
-
-/*===========================================================================*/
+#include "vector.h"
 
 void vec_init(vector *v) { vec_init2(v, DEFAULT_VECTOR_CAPACITY); }
 
@@ -67,9 +30,6 @@ void vec_push_back(vector *v, VEC_DATA_TYPE val) {
         v->data = (VEC_DATA_TYPE *)realloc(v->data,
                                            sizeof(VEC_DATA_TYPE) * v->capacity);
         assert(v->data);
-#if (DEBUG)
-        printf("vector: realloc %ld @vec_push_back\n", v->capacity);
-#endif
     }
     v->data[v->size++] = val;
 }
@@ -134,33 +94,4 @@ void vec_shrink(vector *v) {
                                            sizeof(VEC_DATA_TYPE) * v->capacity);
         assert(v->data);
     }
-}
-
-/*===========================================================================*/
-
-void test_vec() {
-    int i;
-    vector v;
-    vec_init3(&v, 100, 10);
-
-    for (i = 0; i < 10; ++i) {
-        (*vec_at_ref(&v, i)) = i;
-    }
-    for (i = 0; i < 10; ++i) {
-        printf("%d ", vec_at(&v, i));
-    }
-    printf("\n");
-
-    for (i = 10; i < 2000; ++i) {
-        vec_push_back(&v, i);
-    }
-    assert(vec_size(&v) == 2000);
-
-    vec_destory(&v);
-}
-
-int main() {
-    test_vec();
-
-    return 0;
 }

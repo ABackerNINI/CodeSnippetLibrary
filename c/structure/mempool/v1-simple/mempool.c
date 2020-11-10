@@ -1,8 +1,10 @@
 /** File: mempool.c
  *  Tags: c,structure,mempool
  *
- *  Desc: Use it when you need to allocate a lot of fixed size blocks, and thoes
- *      blocks are not going to be freed until the end.
+ *  Desc: Use it when you need to allocate a lot of fixed size memory blocks,
+ *      and thoes memory blocks are not going to be freed until the end.
+ *
+ *      mempool_alloc() has O(1) time complexity.
  *
  *  Date: 2020/11/8
  *
@@ -27,9 +29,9 @@ typedef struct {
      * repeated calculation, use them */
     /* The next element position is (char*)blocks[_cur_block] + _cur_offset */
 
+    size_t _max_offset; /* block size in bytes */
     size_t _cur_block;  /* current block */
     size_t _cur_offset; /* block offset */
-    size_t _max_offset; /* block size in bytes */
 } mempool;
 
 void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block);
@@ -49,9 +51,9 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
     mp->nblocks = 0;
     mp->elem_size = elem_size;
     mp->block_size = nelems_per_block;
-    mp->_cur_block = 0;
-    mp->_cur_offset = 0;
     mp->_max_offset = elem_size * nelems_per_block;
+    mp->_cur_block = 0;
+    mp->_cur_offset = mp->_max_offset;
 }
 
 /* Destory the mempool. */
@@ -63,7 +65,7 @@ void mpool_destory(mempool *mp) {
     free(mp->blocks);
 }
 
-/* Add n memery block to the mempool, each block can hold nelems_per_block
+/* Add n memery blocks to the mempool, each block can hold nelems_per_block
  * elements. */
 void mpool_add_n_blocks(mempool *mp, size_t n) {
     size_t i;
