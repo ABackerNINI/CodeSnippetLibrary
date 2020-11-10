@@ -8,7 +8,7 @@
  *
  *  Date: 2020/11/8
  *
- *  Compile with: gcc mempool.c -W -Wall -Werror -o mempool.out
+ *  Compile with: gcc mempool.c -W -Wall -o mempool.out
  */
 
 #include <stdio.h>
@@ -16,6 +16,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <time.h>
 
 /*===========================================================================*/
 
@@ -52,7 +53,7 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
     mp->elem_size = elem_size;
     mp->block_size = nelems_per_block;
     mp->_max_offset = elem_size * nelems_per_block;
-    mp->_cur_block = 0;
+    mp->_cur_block = (size_t)(-1);
     mp->_cur_offset = mp->_max_offset;
 }
 
@@ -68,12 +69,13 @@ void mpool_destory(mempool *mp) {
 /* Add n memery blocks to the mempool, each block can hold nelems_per_block
  * elements. */
 void mpool_add_n_blocks(mempool *mp, size_t n) {
-    size_t i;
-    mp->blocks = (void **)malloc(sizeof(void *) * (mp->nblocks + n));
+    if (n == 0) return;
+    size_t i, m = mp->nblocks + n;
+    mp->blocks = (void **)realloc(mp->blocks, sizeof(void *) * (m));
     assert(mp->blocks);
-    for (i = 0; i < n; i++) { /* allocate n new blocks */
-        mp->blocks[i + mp->nblocks] = (void *)malloc(mp->_max_offset);
-        assert(mp->blocks[i + mp->nblocks]);
+    for (i = mp->nblocks; i < m; i++) { /* allocate n new blocks */
+        mp->blocks[i] = (void *)malloc(mp->_max_offset);
+        assert(mp->blocks[i]);
     }
     mp->nblocks += n;
 }
@@ -115,8 +117,37 @@ bool mpool_empty(mempool *mp) { return mpool_size(mp) == 0; }
 
 /*===========================================================================*/
 
-int main(int argc, char **argv) {
-    printf("Hello world.\n");
+void random_test() {
+    mempool mpool;
+    mpool_init(&mpool, sizeof(int), 100);
+    int i, N = rand() % 10000 + 1;
+    int **arr = malloc(sizeof(int *) * N);
+    memset(arr, 0, sizeof(int *) * N);
+    for (i = 0; i < N; i++) {
+        if (rand() % 2 == 0) {
+            int *p = mpool_alloc(&mpool);
+            *p = i;
+            arr[i] = p;
+        }
+    }
+
+    for (i = 0; i < N; i++) {
+        if (arr[i]) {
+            assert(*arr[i] == i);
+        }
+    }
+    free(arr);
+    mpool_destory(&mpool);
+}
+
+int main() {
+    srand((unsigned int)time(NULL));
+
+    const int N = 1000;
+    int i;
+    for (i = 0; i < N; i++) {
+        random_test();
+    }
 
     return 0;
 }
