@@ -12,17 +12,17 @@
 typedef VEC_DATA_TYPE STACK_DATA_TYPE;
 
 typedef struct _stack {
-    vector vec;
-} stack;
+    vector_t vec;
+} stack_t;
 
-void stk_init(stack *s);
-void stk_init2(stack *s, size_t capacity);
-void stk_destory(stack *s);
-void stk_push(stack *s, STACK_DATA_TYPE val);
-void stk_pop(stack *s);
-STACK_DATA_TYPE stk_top(stack *s);
-STACK_DATA_TYPE *stk_top_ref(stack *s);
-size_t stk_size(stack *s);
-bool stk_empty(stack *s);
+void stk_init(stack_t *s);
+void stk_init2(stack_t *s, size_t capacity);
+void stk_destory(stack_t *s);
+void stk_push(stack_t *s, STACK_DATA_TYPE val);
+void stk_pop(stack_t *s);
+STACK_DATA_TYPE stk_top(stack_t *s);
+STACK_DATA_TYPE *stk_top_ref(stack_t *s);
+size_t stk_size(stack_t *s);
+bool stk_empty(stack_t *s);
 
 #endif  // __STACK_H__

@@ -21,29 +21,31 @@ typedef struct _deque {
     size_t l;
     size_t r;
     size_t capacity;
-} deque;
+} deque_t;
 
-void deque_init(deque *q);
-void deque_init_by_capacity(deque *q, size_t capacity);
-void deque_destory(deque *q);
-void deque_push_front(deque *q, DATA_TYPE val);
-void deque_push_back(deque *q, DATA_TYPE val);
-void deque_pop_front(deque *q);
-void deque_pop_back(deque *q);
-DATA_TYPE deque_front(deque *q);
-DATA_TYPE deque_back(deque *q);
-DATA_TYPE *deque_front_ref(deque *q);
-DATA_TYPE deque_back_ref(deque *q);
-size_t deque_size(deque *q);
-int deque_empty(deque *q);
+void deque_init(deque_t *q);
+void deque_init_by_capacity(deque_t *q, size_t capacity);
+void deque_destory(deque_t *q);
+void deque_push_front(deque_t *q, DATA_TYPE val);
+void deque_push_back(deque_t *q, DATA_TYPE val);
+void deque_pop_front(deque_t *q);
+void deque_pop_back(deque_t *q);
+DATA_TYPE deque_front(deque_t *q);
+DATA_TYPE deque_back(deque_t *q);
+DATA_TYPE *deque_front_ref(deque_t *q);
+DATA_TYPE deque_back_ref(deque_t *q);
+size_t deque_size(deque_t *q);
+int deque_empty(deque_t *q);
 
-void _deque_increase_capacity(deque *q);
+void _deque_increase_capacity(deque_t *q);
 
 /*===========================================================================*/
 
-void deque_init(deque *q) { deque_init_by_capacity(q, DEFAULT_DEQUE_CAPACITY); }
+void deque_init(deque_t *q) {
+    deque_init_by_capacity(q, DEFAULT_DEQUE_CAPACITY);
+}
 
-void deque_init_by_capacity(deque *q, size_t capacity) {
+void deque_init_by_capacity(deque_t *q, size_t capacity) {
     q->capacity = capacity;
     if (q->capacity > 0) {
         q->q = (DATA_TYPE *)malloc(sizeof(DATA_TYPE) * q->capacity);
@@ -53,49 +55,49 @@ void deque_init_by_capacity(deque *q, size_t capacity) {
     q->l = q->r = 0;
 }
 
-void deque_destory(deque *q) {
+void deque_destory(deque_t *q) {
     if (q->q) free(q->q);
 }
 
-void deque_push_front(deque *q, DATA_TYPE val) {
+void deque_push_front(deque_t *q, DATA_TYPE val) {
     _deque_increase_capacity(q);
 
     q->l = (q->l == 0 ? q->capacity - 1 : q->l - 1);
     q->q[q->l] = val;
 }
 
-void deque_push_back(deque *q, DATA_TYPE val) {
+void deque_push_back(deque_t *q, DATA_TYPE val) {
     _deque_increase_capacity(q);
 
     q->q[q->r] = val;
     q->r = (q->r + 1) % q->capacity;
 }
 
-void deque_pop_front(deque *q) { q->l = (q->l + 1) % q->capacity; }
+void deque_pop_front(deque_t *q) { q->l = (q->l + 1) % q->capacity; }
 
-void deque_pop_back(deque *q) {
+void deque_pop_back(deque_t *q) {
     q->r = (q->r == 0 ? q->capacity - 1 : q->r - 1);
 }
 
-DATA_TYPE deque_front(deque *q) { return q->q[q->l]; }
+DATA_TYPE deque_front(deque_t *q) { return q->q[q->l]; }
 
-DATA_TYPE deque_back(deque *q) {
+DATA_TYPE deque_back(deque_t *q) {
     return q->q[(q->r == 0 ? q->capacity - 1 : q->r - 1)];
 }
 
-DATA_TYPE *deque_front_ref(deque *q) { return &q->q[q->l]; }
+DATA_TYPE *deque_front_ref(deque_t *q) { return &q->q[q->l]; }
 
-DATA_TYPE deque_back_ref(deque *q) {
+DATA_TYPE deque_back_ref(deque_t *q) {
     return &q->q[(q->r == 0 ? q->capacity - 1 : q->r - 1)];
 }
 
-size_t deque_size(deque *q) {
+size_t deque_size(deque_t *q) {
     return q->l <= q->r ? q->r - q->l : q->r + q->capacity - q->l;
 }
 
-int deque_empty(deque *q) { return deque_size(q) == 0; }
+int deque_empty(deque_t *q) { return deque_size(q) == 0; }
 
-void _deque_increase_capacity(deque *q) {
+void _deque_increase_capacity(deque_t *q) {
     DATA_TYPE *new;
     size_t i, j, n, new_cap;
 

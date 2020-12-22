@@ -44,23 +44,23 @@ typedef struct {
     size_t elem_size;       /* element size in bytes */
     size_t block_size;      /* how many elements a block can hold */
     size_t size;            /* elements allocated */
-    stack free_blocks;
+    stack_t free_blocks;
 
     /* The next element position is (char*)blocks[_cur_block] + _cur_offset */
 
     size_t _max_offset; /* block size in bytes */
     size_t _cur_block;  /* current block */
     size_t _cur_offset; /* block offset */
-} mempool;
+} mempool_t;
 
-void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block);
-void mpool_destory(mempool *mp);
-void mpool_add_n_blocks(mempool *mp, size_t n);
-void *mpool_alloc(mempool *mp);
-void mpool_free(mempool *mp, void *ptr);
-size_t mpool_size(mempool *mp);
-size_t mpool_capacity(mempool *mp);
-bool mpool_empty(mempool *mp);
+void mpool_init(mempool_t *mp, size_t elem_size, size_t nelems_per_block);
+void mpool_destory(mempool_t *mp);
+void mpool_add_n_blocks(mempool_t *mp, size_t n);
+void *mpool_alloc(mempool_t *mp);
+void mpool_free(mempool_t *mp, void *ptr);
+size_t mpool_size(mempool_t *mp);
+size_t mpool_capacity(mempool_t *mp);
+bool mpool_empty(mempool_t *mp);
 
 static size_t round_up(size_t size, size_t align);
 static mempool_block *new_block(size_t size);
@@ -69,7 +69,7 @@ static void free_block(mempool_block *block);
 /*===========================================================================*/
 
 /* Initialize the mempool. */
-void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
+void mpool_init(mempool_t *mp, size_t elem_size, size_t nelems_per_block) {
     /* for memory alignment */
     elem_size = round_up(elem_size + HEADER_SIZE, MEMPOOL_MEM_ALIGNMENT);
 
@@ -85,7 +85,7 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
 }
 
 /* Destory the mempool. */
-void mpool_destory(mempool *mp) {
+void mpool_destory(mempool_t *mp) {
     size_t i;
     for (i = 0; i < mp->nblocks; i++) {
         free_block(mp->blocks[i]);
@@ -96,7 +96,7 @@ void mpool_destory(mempool *mp) {
 
 /* Add n memery blocks to the mempool, each block can hold nelems_per_block
  * elements. */
-void mpool_add_n_blocks(mempool *mp, size_t n) {
+void mpool_add_n_blocks(mempool_t *mp, size_t n) {
     if (n == 0) return;
     size_t i, m = mp->nblocks + n;
     mp->blocks =
@@ -116,7 +116,7 @@ void mpool_add_n_blocks(mempool *mp, size_t n) {
 }
 
 /* Allocate memory for an element. */
-void *mpool_alloc(mempool *mp) {
+void *mpool_alloc(mempool_t *mp) {
     if (mp->_cur_offset == mp->_max_offset) {
         /* if cur_offset reaches the max_offset, that means the current block is
          * used up, start using the next block */
@@ -139,7 +139,7 @@ void *mpool_alloc(mempool *mp) {
 }
 
 /* Free memory of an element pointer returned by mpool_alloc(). */
-void mpool_free(mempool *mp, void *ptr) {
+void mpool_free(mempool_t *mp, void *ptr) {
     if (ptr == NULL) return;
     mempool_pack *pack = ptr - HEADER_SIZE;
     assert(pack->block_no < mp->nblocks);
@@ -158,13 +158,13 @@ void mpool_free(mempool *mp, void *ptr) {
 }
 
 /* Get number of elements allocated in the mempool. */
-size_t mpool_size(mempool *mp) { return mp->size; }
+size_t mpool_size(mempool_t *mp) { return mp->size; }
 
 /* Get number of elements the mempool can currently hold. */
-size_t mpool_capacity(mempool *mp) { return mp->nblocks * mp->block_size; }
+size_t mpool_capacity(mempool_t *mp) { return mp->nblocks * mp->block_size; }
 
 /* Check if no elements has been allocated in the mempool. */
-bool mpool_empty(mempool *mp) { return mpool_size(mp) == 0; }
+bool mpool_empty(mempool_t *mp) { return mpool_size(mp) == 0; }
 
 /*===========================================================================*/
 
@@ -193,7 +193,7 @@ static void free_block(mempool_block *block) {
 /*===========================================================================*/
 
 void random_test() {
-    mempool mpool;
+    mempool_t mpool;
     mpool_init(&mpool, sizeof(int), 100);
     int i, N = rand() % 10000 + 1;
     int **arr = malloc(sizeof(int *) * N);

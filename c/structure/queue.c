@@ -21,23 +21,23 @@ typedef struct _queue {
     size_t l;
     size_t r;
     size_t capacity;
-} queue;
+} queue_t;
 
-void que_init(queue *q);
-void que_init_by_capacity(queue *q, size_t capacity);
-void que_destory(queue *q);
-void que_push_back(queue *q, DATA_TYPE val);
-void que_pop_front(queue *q);
-DATA_TYPE que_front(queue *q);
-DATA_TYPE *que_front_ref(queue *q);
-size_t que_size(queue *q);
-int que_empty(queue *q);
+void que_init(queue_t *q);
+void que_init_by_capacity(queue_t *q, size_t capacity);
+void que_destory(queue_t *q);
+void que_push_back(queue_t *q, DATA_TYPE val);
+void que_pop_front(queue_t *q);
+DATA_TYPE que_front(queue_t *q);
+DATA_TYPE *que_front_ref(queue_t *q);
+size_t que_size(queue_t *q);
+int que_empty(queue_t *q);
 
 /*===========================================================================*/
 
-void que_init(queue *q) { que_init_by_capacity(q, DEFAULT_QUEUE_CAPACITY); }
+void que_init(queue_t *q) { que_init_by_capacity(q, DEFAULT_QUEUE_CAPACITY); }
 
-void que_init_by_capacity(queue *q, size_t capacity) {
+void que_init_by_capacity(queue_t *q, size_t capacity) {
     q->capacity = capacity;
     if (q->capacity > 0) {
         q->q = (DATA_TYPE *)malloc(sizeof(DATA_TYPE) * q->capacity);
@@ -47,11 +47,11 @@ void que_init_by_capacity(queue *q, size_t capacity) {
     q->l = q->r = 0;
 }
 
-void que_destory(queue *q) {
+void que_destory(queue_t *q) {
     if (q->q) free(q->q);
 }
 
-void que_push_back(queue *q, DATA_TYPE val) {
+void que_push_back(queue_t *q, DATA_TYPE val) {
     DATA_TYPE *new;
     size_t i, j, n, new_cap;
     if (que_size(q) == q->capacity) {
@@ -87,17 +87,17 @@ void que_push_back(queue *q, DATA_TYPE val) {
     q->r = (q->r + 1) % q->capacity;
 }
 
-void que_pop_front(queue *q) { q->l = (q->l + 1) % q->capacity; }
+void que_pop_front(queue_t *q) { q->l = (q->l + 1) % q->capacity; }
 
-DATA_TYPE que_front(queue *q) { return q->q[q->l]; }
+DATA_TYPE que_front(queue_t *q) { return q->q[q->l]; }
 
-DATA_TYPE *que_front_ref(queue *q) { return &q->q[q->l]; }
+DATA_TYPE *que_front_ref(queue_t *q) { return &q->q[q->l]; }
 
-size_t que_size(queue *q) {
+size_t que_size(queue_t *q) {
     return q->l <= q->r ? q->r - q->l : q->r + q->capacity - q->l;
 }
 
-int que_empty(queue *q) { return que_size(q) == 0; }
+int que_empty(queue_t *q) { return que_size(q) == 0; }
 
 /*===========================================================================*/
 

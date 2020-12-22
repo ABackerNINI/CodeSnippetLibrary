@@ -26,22 +26,23 @@ typedef struct _list {
     list_node *first;
     list_node *tail;
     size_t size;
-} list;
+} list_t;
 
-void list_init(list *l);
-void list_destory(list *l);
-void list_push_front(list *l, DATA_TYPE val);
-void list_push_back(list *l, DATA_TYPE val);
-void list_pop_front(list *l);
-/* Bad choice, 'dlist' (double linked list) is recommended if have to use 'pop_back' */
+void list_init(list_t *l);
+void list_destory(list_t *l);
+void list_push_front(list_t *l, DATA_TYPE val);
+void list_push_back(list_t *l, DATA_TYPE val);
+void list_pop_front(list_t *l);
+/* Bad choice, 'dlist' (double linked list) is recommended if have to use
+ * 'pop_back' */
 /* void list_pop_back(list *l); */
-DATA_TYPE list_front(list *l);
-DATA_TYPE list_back(list *l);
-DATA_TYPE *list_front_ref(list *l);
-DATA_TYPE *list_back_ref(list *l);
-size_t list_size(list *l);
-int list_empty(list *l);
-list_iterator list_iter_begin(list *l);
+DATA_TYPE list_front(list_t *l);
+DATA_TYPE list_back(list_t *l);
+DATA_TYPE *list_front_ref(list_t *l);
+DATA_TYPE *list_back_ref(list_t *l);
+size_t list_size(list_t *l);
+int list_empty(list_t *l);
+list_iterator list_iter_begin(list_t *l);
 list_iterator list_iter_end(/* list *l */);
 DATA_TYPE list_iter_data(list_iterator iter);
 DATA_TYPE *list_iter_data_ref(list_iterator iter);
@@ -49,12 +50,12 @@ list_iterator list_iter_next(list_iterator iter);
 
 /*===========================================================================*/
 
-void list_init(list *l) {
+void list_init(list_t *l) {
     l->first = NULL;
     l->size = 0;
 }
 
-void list_destory(list *l) {
+void list_destory(list_t *l) {
     list_node *node, *tmp;
 
     node = l->first;
@@ -65,7 +66,7 @@ void list_destory(list *l) {
     }
 }
 
-void list_push_front(list *l, DATA_TYPE val) {
+void list_push_front(list_t *l, DATA_TYPE val) {
     list_node *new = (list_node *)malloc(sizeof(list_node));
     new->data = val;
     new->next = l->first;
@@ -78,7 +79,7 @@ void list_push_front(list *l, DATA_TYPE val) {
     ++l->size;
 }
 
-void list_push_back(list *l, DATA_TYPE val) {
+void list_push_back(list_t *l, DATA_TYPE val) {
     list_node *new = (list_node *)malloc(sizeof(list_node));
     new->data = val;
     new->next = NULL;
@@ -92,7 +93,7 @@ void list_push_back(list *l, DATA_TYPE val) {
     ++l->size;
 }
 
-void list_pop_front(list *l) {
+void list_pop_front(list_t *l) {
     list_node *tmp = l->first;
     l->first = l->first->next;
     free(tmp);
@@ -101,19 +102,19 @@ void list_pop_front(list *l) {
 
 /* void list_pop_back(list *l){} */
 
-DATA_TYPE list_front(list *l) { return l->first->data; }
+DATA_TYPE list_front(list_t *l) { return l->first->data; }
 
-DATA_TYPE list_back(list *l) { return l->tail->data; }
+DATA_TYPE list_back(list_t *l) { return l->tail->data; }
 
-DATA_TYPE *list_front_ref(list *l) { return &l->first->data; }
+DATA_TYPE *list_front_ref(list_t *l) { return &l->first->data; }
 
-DATA_TYPE *list_back_ref(list *l) { return &l->tail->data; }
+DATA_TYPE *list_back_ref(list_t *l) { return &l->tail->data; }
 
-size_t list_size(list *l) { return l->size; }
+size_t list_size(list_t *l) { return l->size; }
 
-int list_empty(list *l) { return l->size == 0; }
+int list_empty(list_t *l) { return l->size == 0; }
 
-list_iterator list_iter_begin(list *l) { return l->first; }
+list_iterator list_iter_begin(list_t *l) { return l->first; }
 
 list_iterator list_iter_end(/* list *l */) { return NULL; }
 
@@ -125,7 +126,7 @@ list_iterator list_iter_next(list_iterator iter) { return iter->next; }
 
 /*===========================================================================*/
 
-void test_list_print(list *l) {
+void test_list_print(list_t *l) {
     int first;
     list_iterator iter;
 
@@ -144,7 +145,7 @@ void test_list_print(list *l) {
 }
 
 void test_list() {
-    list l;
+    list_t l;
     list_init(&l);
 
     list_push_back(&l, 1);
@@ -177,7 +178,7 @@ void test_list() {
 
 void test_list_iterator() {
     int i;
-    list l;
+    list_t l;
     list_iterator iter;
 
     list_init(&l);

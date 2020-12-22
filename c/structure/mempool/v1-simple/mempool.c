@@ -33,21 +33,21 @@ typedef struct {
     size_t _max_offset; /* block size in bytes */
     size_t _cur_block;  /* current block */
     size_t _cur_offset; /* block offset */
-} mempool;
+} mempool_t;
 
-void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block);
-void mpool_destory(mempool *mp);
-void mpool_add_n_blocks(mempool *mp, size_t n);
-void *mpool_alloc(mempool *mp);
-void *mpool_at(mempool *mp, size_t index);
-size_t mpool_size(mempool *mp);
-size_t mpool_capacity(mempool *mp);
-bool mpool_empty(mempool *mp);
+void mpool_init(mempool_t *mp, size_t elem_size, size_t nelems_per_block);
+void mpool_destory(mempool_t *mp);
+void mpool_add_n_blocks(mempool_t *mp, size_t n);
+void *mpool_alloc(mempool_t *mp);
+void *mpool_at(mempool_t *mp, size_t index);
+size_t mpool_size(mempool_t *mp);
+size_t mpool_capacity(mempool_t *mp);
+bool mpool_empty(mempool_t *mp);
 
 /*===========================================================================*/
 
 /* Initialize the mempool. */
-void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
+void mpool_init(mempool_t *mp, size_t elem_size, size_t nelems_per_block) {
     mp->blocks = NULL;
     mp->nblocks = 0;
     mp->elem_size = elem_size;
@@ -58,7 +58,7 @@ void mpool_init(mempool *mp, size_t elem_size, size_t nelems_per_block) {
 }
 
 /* Destory the mempool. */
-void mpool_destory(mempool *mp) {
+void mpool_destory(mempool_t *mp) {
     size_t i;
     for (i = 0; i < mp->nblocks; i++) {
         free(mp->blocks[i]);
@@ -68,7 +68,7 @@ void mpool_destory(mempool *mp) {
 
 /* Add n memery blocks to the mempool, each block can hold nelems_per_block
  * elements. */
-void mpool_add_n_blocks(mempool *mp, size_t n) {
+void mpool_add_n_blocks(mempool_t *mp, size_t n) {
     if (n == 0) return;
     size_t i, m = mp->nblocks + n;
     mp->blocks = (void **)realloc(mp->blocks, sizeof(void *) * (m));
@@ -81,7 +81,7 @@ void mpool_add_n_blocks(mempool *mp, size_t n) {
 }
 
 /* Allocate memory for an element. */
-void *mpool_alloc(mempool *mp) {
+void *mpool_alloc(mempool_t *mp) {
     if (mp->_cur_offset == mp->_max_offset) {
         /* if cur_offset reaches the max_offset, that means the current block is
          * used up, start using the next block */
@@ -98,27 +98,27 @@ void *mpool_alloc(mempool *mp) {
 }
 
 /* Get address of an allocated element. */
-void *mpool_at(mempool *mp, size_t index) {
+void *mpool_at(mempool_t *mp, size_t index) {
     size_t block = index / mp->block_size;
     size_t offset = index % mp->block_size * mp->elem_size;
     return ((char *)mp->blocks[block]) + offset;
 }
 
 /* Get number of elements allocated in the mempool. */
-size_t mpool_size(mempool *mp) {
+size_t mpool_size(mempool_t *mp) {
     return mp->block_size * mp->_cur_block + mp->_cur_offset / mp->block_size;
 }
 
 /* Get number of elements the mempool can currently hold. */
-size_t mpool_capacity(mempool *mp) { return mp->nblocks * mp->block_size; }
+size_t mpool_capacity(mempool_t *mp) { return mp->nblocks * mp->block_size; }
 
 /* Check if no elements has been allocated in the mempool. */
-bool mpool_empty(mempool *mp) { return mpool_size(mp) == 0; }
+bool mpool_empty(mempool_t *mp) { return mpool_size(mp) == 0; }
 
 /*===========================================================================*/
 
 void random_test() {
-    mempool mpool;
+    mempool_t mpool;
     mpool_init(&mpool, sizeof(int), 100);
     int i, N = rand() % 10000 + 1;
     int **arr = malloc(sizeof(int *) * N);
