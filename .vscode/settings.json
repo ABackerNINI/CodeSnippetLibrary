@@ -5,7 +5,15 @@
         "list.h": "c",
         "dlist.h": "c",
         "unordered_map": "c",
-        "list": "c"
+        "list": "c",
+        "*.tcc": "c",
+        "initializer_list": "c",
+        "limits": "c",
+        "type_traits": "c",
+        "deque": "c",
+        "vector": "cpp",
+        "functional": "cpp",
+        "random": "cpp"
     },
     "cSpell.words": [
         "UDEDF",
